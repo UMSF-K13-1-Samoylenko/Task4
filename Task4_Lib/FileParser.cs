@@ -11,54 +11,94 @@ namespace Task4_Lib
     /// <summary>
     /// FileParser class for specified work with files
     /// </summary>
-    public static class FileParser
+    public class FileParser
     {
         /// <summary>
-        /// Getting numbers of line entries to file. Can throw default file exceptions like FileNotFoundEx
+        /// Initializes a new instance of the <see cref="FileParser" /> class
         /// </summary>
-        /// <param name="filepath">Path to file.</param>
+        /// <param name="filepath">Path to source file</param>
+        public FileParser(string filepath)
+        {
+            this.Filepath = filepath;
+        }
+
+        /// <summary>
+        /// Gets or sets path to source file
+        /// </summary>
+        public string Filepath { get; set; }
+
+        /// <summary>
+        /// Getting numbers of line entries to file.
+        /// </summary>
         /// <param name="entriedString">String to count entries</param>
         /// <returns>Returns count of line entries</returns>
-        public static int GetNumberOfLineEntriesToFile(string filepath, string entriedString)
+        /// <exception cref="SourceNotFoundException">Thrown when file not exist</exception>
+        public int GetNumberOfLineEntriesToFile(string entriedString)
         {
-            StreamReader streamReader = new StreamReader(filepath);
             int result = 0;
-            result = streamReader.ReadToEnd().Split(new string[] { entriedString }, StringSplitOptions.None).Count() - 1;
-            streamReader.Close();
+            try
+            {
+                using (StreamReader streamReader = new StreamReader(this.Filepath))
+                {
+                    while (!streamReader.EndOfStream)
+                    {
+                        string stringFromSource = streamReader.ReadLine();
+                        int oldLength = stringFromSource.Length;
+                        stringFromSource = stringFromSource.Replace(entriedString, string.Empty);
+                        int newLength = stringFromSource.Length;
+                        result += (oldLength - newLength) / entriedString.Length;
+                    }
+                }
+            }
+            catch (FileNotFoundException ex)
+            { 
+                throw new SourceNotFoundException("Source not found!", ex);
+            }
+
             return result;
         }
 
         /// <summary>
-        /// Replacing searchingString-s in file to replacementString-s. Can throw default file exceptions like FileNotFoundEx
+        /// Replacing searchingString-s in file to replacementString-s.
         /// </summary>
-        /// <param name="filepath">Path to file.</param>
         /// <param name="searchString">String to replace</param>
         /// <param name="replacementString">Replacement string</param>
-        public static void ReplacingStringInFile(string filepath, string searchString, string replacementString)
+        /// <exception cref="SourceNotFoundException">Thrown when file not exist</exception>
+        public void ReplacingStringInFile(string searchString, string replacementString)
         {
-            StreamReader sourceFile = new StreamReader(filepath);
-            string tempFileFilepath = DateTime.Now.ToString("dd_MMM_yyyy");
-            StreamWriter destFile = new StreamWriter(tempFileFilepath);
-            string stringFromSource;
-            while (!sourceFile.EndOfStream)
+            string tempFileFilepath = Path.GetTempFileName();
+            try
             {
-                stringFromSource = sourceFile.ReadLine();
-                stringFromSource = stringFromSource.Replace(searchString, replacementString);
-                destFile.WriteLine(stringFromSource);
-            }
+                using (StreamReader sourceFile = new StreamReader(this.Filepath))
+                {
+                    using (StreamWriter destFile = new StreamWriter(tempFileFilepath))
+                    {
+                        while (!sourceFile.EndOfStream)
+                        {
+                            string stringFromSource = sourceFile.ReadLine();
+                            stringFromSource = stringFromSource.Replace(searchString, replacementString);
+                            destFile.Write(stringFromSource + Environment.NewLine);
+                        }
+                    }
+                }
 
-            sourceFile.Close();
-            destFile.Close();
-            sourceFile = new StreamReader(tempFileFilepath);
-            destFile = new StreamWriter(filepath);
-            while (!sourceFile.EndOfStream)
+                using (StreamReader sourceFile = new StreamReader(tempFileFilepath))
+                {
+                    using (StreamWriter destFile = new StreamWriter(this.Filepath))
+                    {
+                        while (!sourceFile.EndOfStream)
+                        {
+                            destFile.Write(sourceFile.ReadLine() + Environment.NewLine);
+                        }
+                    }
+                }
+
+                File.Delete(tempFileFilepath);
+            }
+            catch (FileNotFoundException ex)
             {
-                destFile.WriteLine(sourceFile.ReadLine());
+                throw new SourceNotFoundException("Source not found!", ex);
             }
-
-            sourceFile.Close();
-            destFile.Close();
-            File.Delete(tempFileFilepath);
         }
     }
 }

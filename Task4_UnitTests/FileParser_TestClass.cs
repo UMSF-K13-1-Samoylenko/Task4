@@ -4,6 +4,7 @@
 
 namespace Task4_UnitTests
 {
+    using System;
     using System.IO;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Task4_Lib;
@@ -30,6 +31,11 @@ namespace Task4_UnitTests
         private readonly string trashString;
 
         /// <summary>
+        /// File parser object to works with files
+        /// </summary>
+        private readonly FileParser fileParser;
+
+        /// <summary>
         /// Initializes a new instance of the FileParser_TestClass class
         /// Constructor of class to initialize string fieleds
         /// </summary>
@@ -38,6 +44,7 @@ namespace Task4_UnitTests
             this.filepath = "temp.txt";
             this.stringToSearch = "String to search";
             this.trashString = "Hello world!";
+            this.fileParser = new FileParser(this.filepath);
         }
 
         /// <summary>
@@ -61,7 +68,7 @@ namespace Task4_UnitTests
         {
             StreamWriter streamWriter = new StreamWriter(this.filepath);
             streamWriter.Close();
-            Assert.AreEqual(0, FileParser.GetNumberOfLineEntriesToFile(this.filepath, this.stringToSearch));
+            Assert.AreEqual(0, this.fileParser.GetNumberOfLineEntriesToFile(this.stringToSearch));
         }
 
         /// <summary>
@@ -82,7 +89,7 @@ namespace Task4_UnitTests
             }
 
             streamWriter.Close();
-            Assert.AreEqual(0, FileParser.GetNumberOfLineEntriesToFile(this.filepath, this.stringToSearch));
+            Assert.AreEqual(0, this.fileParser.GetNumberOfLineEntriesToFile(this.stringToSearch));
         }
 
         /// <summary>
@@ -114,17 +121,17 @@ namespace Task4_UnitTests
             }
 
             streamWriter.Close();
-            Assert.AreEqual(3, FileParser.GetNumberOfLineEntriesToFile(this.filepath, this.stringToSearch));
+            Assert.AreEqual(3, this.fileParser.GetNumberOfLineEntriesToFile(this.stringToSearch));
         }
 
         /// <summary>
         /// Test FileParser.GetNumberOfLineEntriesToFile in a case of file not exist
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(FileNotFoundException))]
+        [ExpectedException(typeof(SourceNotFoundException))]
         public void GetNumberOfLineEntriesToFile_FileNotExist()
         {
-            FileParser.GetNumberOfLineEntriesToFile(this.filepath, string.Empty);
+            this.fileParser.GetNumberOfLineEntriesToFile(this.stringToSearch);
         }
 
         /// <summary>
@@ -135,7 +142,7 @@ namespace Task4_UnitTests
         {
             StreamWriter streamWriter = new StreamWriter(this.filepath);
             streamWriter.Close();
-            FileParser.ReplacingStringInFile(this.filepath, this.stringToSearch, this.trashString);
+            this.fileParser.ReplacingStringInFile(this.stringToSearch, this.trashString);
             Assert.AreEqual(string.Empty, this.GetFileBody());
         }
 
@@ -158,7 +165,7 @@ namespace Task4_UnitTests
 
             streamWriter.Close();
             string expected = this.GetFileBody();
-            FileParser.ReplacingStringInFile(this.filepath, this.stringToSearch, this.trashString);
+            this.fileParser.ReplacingStringInFile(this.stringToSearch, this.trashString);
             string actual = this.GetFileBody();
             Assert.AreEqual(expected, actual);
         }
@@ -200,12 +207,11 @@ namespace Task4_UnitTests
                     expected += this.trashString;
                 }
 
-                expected += "\n";
+                expected += Environment.NewLine;
             }
 
-            FileParser.ReplacingStringInFile(this.filepath, this.stringToSearch, this.trashString);
+            this.fileParser.ReplacingStringInFile(this.stringToSearch, this.trashString);
             string actual = this.GetFileBody();
-            actual = actual.Replace("\r\n", "\n");
             Assert.AreEqual(expected, actual);
         }
 
@@ -213,10 +219,10 @@ namespace Task4_UnitTests
         ///  Testing of FileParser.ReplacingStringInFile (file not exist)
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(FileNotFoundException))]
+        [ExpectedException(typeof(SourceNotFoundException))]
         public void ReplacingStringInFile_FileNotExist()
         {
-            FileParser.ReplacingStringInFile(this.filepath, this.stringToSearch, this.trashString);
+            this.fileParser.ReplacingStringInFile(this.stringToSearch, this.trashString);
         }
 
         /// <summary>
