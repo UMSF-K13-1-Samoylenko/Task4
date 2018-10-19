@@ -66,9 +66,15 @@ namespace Task4_UnitTests
         [TestMethod]
         public void GetNumberOfLineEntriesToFile_EmptyFile()
         {
+            // Arrange
             StreamWriter streamWriter = new StreamWriter(this.filepath);
             streamWriter.Close();
-            Assert.AreEqual(0, this.fileParser.GetNumberOfLineEntriesToFile(this.stringToSearch));
+
+            // Actual
+            int actual = this.fileParser.GetNumberOfLineEntriesToFile(this.stringToSearch);
+
+            // Assert
+            Assert.AreEqual(0, actual);
         }
 
         /// <summary>
@@ -77,6 +83,7 @@ namespace Task4_UnitTests
         [TestMethod]
         public void GetNumberOfLineEntriesToFile_NullEntries()
         {
+            // Arrange
             StreamWriter streamWriter = new StreamWriter(this.filepath);
             for (int i = 0; i < 3; ++i)
             {
@@ -89,7 +96,10 @@ namespace Task4_UnitTests
             }
 
             streamWriter.Close();
-            Assert.AreEqual(0, this.fileParser.GetNumberOfLineEntriesToFile(this.stringToSearch));
+
+            // Actual
+            int actual = this.fileParser.GetNumberOfLineEntriesToFile(this.stringToSearch);
+            Assert.AreEqual(0, actual);
         }
 
         /// <summary>
@@ -102,6 +112,7 @@ namespace Task4_UnitTests
         [TestMethod]
         public void GetNumberOfLineEntriesToFile_ThreeEntries()
         {
+            // Arrange
             StreamWriter streamWriter = new StreamWriter(this.filepath);
             for (int i = 0; i < 3; i++)
             {
@@ -121,7 +132,9 @@ namespace Task4_UnitTests
             }
 
             streamWriter.Close();
-            Assert.AreEqual(3, this.fileParser.GetNumberOfLineEntriesToFile(this.stringToSearch));
+
+            int actual = this.fileParser.GetNumberOfLineEntriesToFile(this.stringToSearch);
+            Assert.AreEqual(3, actual);
         }
 
         /// <summary>
@@ -140,10 +153,16 @@ namespace Task4_UnitTests
         [TestMethod]
         public void ReplacingStringInFile_EmptyFile()
         {
+            // Arrange
             StreamWriter streamWriter = new StreamWriter(this.filepath);
             streamWriter.Close();
             this.fileParser.ReplacingStringInFile(this.stringToSearch, this.trashString);
-            Assert.AreEqual(string.Empty, this.GetFileBody());
+
+            // Actual
+            string actual = this.GetFileBody();
+
+            // Assert
+            Assert.AreEqual(string.Empty, actual);
         }
 
         /// <summary>
@@ -152,6 +171,7 @@ namespace Task4_UnitTests
         [TestMethod]
         public void ReplacingStringInFile_NullEntries()
         {
+            // Arrange
             StreamWriter streamWriter = new StreamWriter(this.filepath);
             for (int i = 0; i < 3; ++i)
             {
@@ -166,7 +186,11 @@ namespace Task4_UnitTests
             streamWriter.Close();
             string expected = this.GetFileBody();
             this.fileParser.ReplacingStringInFile(this.stringToSearch, this.trashString);
+
+            // Actual
             string actual = this.GetFileBody();
+
+            // Assert
             Assert.AreEqual(expected, actual);
         }
 
@@ -180,6 +204,7 @@ namespace Task4_UnitTests
         [TestMethod]
         public void ReplacingStringInFile_ThreeEntries()
         {
+            // Arrange
             StreamWriter streamWriter = new StreamWriter(this.filepath);
             for (int i = 0; i < 3; ++i)
             {
@@ -211,7 +236,11 @@ namespace Task4_UnitTests
             }
 
             this.fileParser.ReplacingStringInFile(this.stringToSearch, this.trashString);
+
+            // Actual
             string actual = this.GetFileBody();
+
+            // Assert
             Assert.AreEqual(expected, actual);
         }
 
