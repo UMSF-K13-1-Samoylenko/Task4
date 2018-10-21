@@ -8,7 +8,7 @@ namespace Task4_Lib
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// Exception which is created when source, which you ask wasn`t found
+    /// Exception which is created when source, which you ask was not found
     /// </summary>
     public class SourceNotFoundException : Exception
     {

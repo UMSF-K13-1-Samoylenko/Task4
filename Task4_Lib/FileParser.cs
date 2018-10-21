@@ -14,6 +14,16 @@ namespace Task4_Lib
     public class FileParser
     {
         /// <summary>
+        /// String for search
+        /// </summary>
+        private string searchString;
+
+        /// <summary>
+        /// String for replace
+        /// </summary>
+        private string replacementString;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FileParser" /> class
         /// </summary>
         /// <param name="filepath">Path to source file</param>
@@ -21,6 +31,13 @@ namespace Task4_Lib
         {
             this.Filepath = filepath;
         }
+
+        /// <summary>
+        /// Delegate for methods which will be called inside <see cref="ReadFromSourceAndWriteToDest"/>
+        /// </summary>
+        /// <param name="sourceFile">Source file stream</param>
+        /// <param name="destFile">Destination file stream</param>
+        private delegate void ReadWriteOption(StreamReader sourceFile, StreamWriter destFile);
 
         /// <summary>
         /// Gets or sets path to source file
@@ -51,7 +68,7 @@ namespace Task4_Lib
                 }
             }
             catch (FileNotFoundException ex)
-            { 
+            {
                 throw new SourceNotFoundException("Source not found!", ex);
             }
 
@@ -66,38 +83,63 @@ namespace Task4_Lib
         /// <exception cref="SourceNotFoundException">Thrown when file not exist</exception>
         public void ReplacingStringInFile(string searchString, string replacementString)
         {
+            this.searchString = searchString;
+            this.replacementString = replacementString;
             string tempFileFilepath = Path.GetTempFileName();
             try
             {
-                using (StreamReader sourceFile = new StreamReader(this.Filepath))
-                {
-                    using (StreamWriter destFile = new StreamWriter(tempFileFilepath))
-                    {
-                        while (!sourceFile.EndOfStream)
-                        {
-                            string stringFromSource = sourceFile.ReadLine();
-                            stringFromSource = stringFromSource.Replace(searchString, replacementString);
-                            destFile.Write(stringFromSource + Environment.NewLine);
-                        }
-                    }
-                }
-
-                using (StreamReader sourceFile = new StreamReader(tempFileFilepath))
-                {
-                    using (StreamWriter destFile = new StreamWriter(this.Filepath))
-                    {
-                        while (!sourceFile.EndOfStream)
-                        {
-                            destFile.Write(sourceFile.ReadLine() + Environment.NewLine);
-                        }
-                    }
-                }
-
+               this.ReadFromSourceAndWriteToDest(this.Filepath, tempFileFilepath, this.CopyFromOneToOtherAndReplaceString);
+               this.ReadFromSourceAndWriteToDest(tempFileFilepath, this.Filepath, this.CopyFromOneToOther);
                 File.Delete(tempFileFilepath);
             }
             catch (FileNotFoundException ex)
             {
                 throw new SourceNotFoundException("Source not found!", ex);
+            }
+        }
+
+        /// <summary>
+        /// Read From One File And Writing To Other
+        /// </summary>
+        /// <param name="sourceFilepath">Source file path</param>
+        /// <param name="destFilepath">Destination file path</param>
+        /// <param name="readWriteOption">Delegate witch will be called ass a body of read-write</param>
+        private void ReadFromSourceAndWriteToDest(string sourceFilepath, string destFilepath, ReadWriteOption readWriteOption)
+        {
+            using (StreamReader sourceFile = new StreamReader(sourceFilepath))
+            {
+                using (StreamWriter destFile = new StreamWriter(destFilepath))
+                {
+                    readWriteOption.Invoke(sourceFile, destFile);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Copy From One To Other And Replace String
+        /// </summary>
+        /// <param name="sourceFile">Source File</param>
+        /// <param name="destFile">Destination file</param>
+        private void CopyFromOneToOtherAndReplaceString(StreamReader sourceFile, StreamWriter destFile)
+        {
+            while (!sourceFile.EndOfStream)
+            {
+                string stringFromSource = sourceFile.ReadLine();
+                stringFromSource = stringFromSource.Replace(this.searchString, this.replacementString);
+                destFile.Write(stringFromSource + Environment.NewLine);
+            }
+        }
+
+        /// <summary>
+        /// Copy From One To Other
+        /// </summary>
+        /// <param name="sourceFile">Source file</param>
+        /// <param name="destFile">Destination file</param>
+        private void CopyFromOneToOther(StreamReader sourceFile, StreamWriter destFile)
+        {
+            while (!sourceFile.EndOfStream)
+            {
+                destFile.Write(sourceFile.ReadLine() + Environment.NewLine);
             }
         }
     }

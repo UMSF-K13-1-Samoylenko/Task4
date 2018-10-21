@@ -37,7 +37,7 @@ namespace Task4_UnitTests
 
         /// <summary>
         /// Initializes a new instance of the FileParser_TestClass class
-        /// Constructor of class to initialize string fieleds
+        /// Constructor of class to initialize string fields
         /// </summary>
         public FileParser_TestClass()
         {
@@ -255,7 +255,7 @@ namespace Task4_UnitTests
         }
 
         /// <summary>
-        /// Getting whole lines from temp file. Unsafe if file is realy big.
+        /// Getting whole lines from temp file. Unsafe if file is really big.
         /// </summary>
         /// <returns>Line with whole file body</returns>
         private string GetFileBody()

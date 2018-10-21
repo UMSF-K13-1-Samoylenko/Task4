@@ -9,18 +9,17 @@ namespace Task4_Console_UI
     using Task4_Lib;
 
     /// <summary>
-    /// Main class of programm
+    /// Main class of program
     /// </summary>
     public class Program
     {
         /// <summary>
-        /// Entry point to programm
+        /// Entry point to program
         /// </summary>
         /// <param name="args">Command line args</param>
         private static void Main(string[] args)
         {
-            ConsoleFileParserMenu consoleMenu = new ConsoleFileParserMenu();
-            consoleMenu.Menu();
+            ConsoleFileParserMenu.Menu();
         }
     }
 }

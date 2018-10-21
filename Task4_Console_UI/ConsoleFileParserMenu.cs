@@ -10,19 +10,29 @@ namespace Task4_Console_UI
     /// <summary>
     /// Console menu class for fileParser opportunities demo
     /// </summary>
-    public class ConsoleFileParserMenu
+    public static class ConsoleFileParserMenu
     {
+        /// <summary>
+        /// Find more arguments count
+        /// </summary>
+        private const int FIND_MODE_ARGS_COUNT = 2;
+
+        /// <summary>
+        /// Replace more arguments count
+        /// </summary>
+        private const int REPLACE_MODE_ARGS_COUNT = 3;
+    
         /// <summary>
         /// Console menu for fileParser opportunities demo
         /// </summary>
         /// <exception cref="SourceNotFoundException">Thrown when file not exist</exception>
-        public void Menu()
+        public static void Menu()
         {
             string[] args = Environment.GetCommandLineArgs();
             FileParser fileParser = new FileParser(args[0]);
             switch (args.Length)
             {
-                case 2:
+                case FIND_MODE_ARGS_COUNT:
                 {
                     try
                     {
@@ -37,7 +47,7 @@ namespace Task4_Console_UI
                     break;
                 }
 
-                case 3:
+                case REPLACE_MODE_ARGS_COUNT:
                 {
                     try
                     {
@@ -52,15 +62,15 @@ namespace Task4_Console_UI
                 }
 
                 default:
-                    this.ConsoleInstruction();
+                    ConsoleFileParserMenu.ConsoleInstruction();
                     break;
             }
         }
 
         /// <summary>
-        /// Instruction how to use programm. Writting to the console
+        /// Instruction how to use program. Writing to the console
         /// </summary>
-        private void ConsoleInstruction()
+        private static void ConsoleInstruction()
         {
             Console.WriteLine("Program assignment" + Environment.NewLine +
             "Count the number of line entries in the text file" + Environment.NewLine +
